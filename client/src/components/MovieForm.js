@@ -13,7 +13,11 @@ function MovieForm() {
     discount: false,
     female_director: false,
   });
+  const [errors, setErrors] = useState([]);
 
+  //
+  // My questions are here with fetch:
+  //
   function handleSubmit(e) {
     e.preventDefault();
     fetch("/movies", {
@@ -22,11 +26,18 @@ function MovieForm() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((newMovie) => console.log(newMovie));
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((newMovie) => console.log(newMovie));
+      } else {
+        response.json().then((errorData) => {
+          setErrors(errorData.errors);
+          console.log(errorData.errors);
+        });
+      }
+    }).then(console.log(errors));
   }
-
+  
   function handleChange(e) {
     const value =
       e.target.type === "checkbox" ? e.target.checked : e.target.value;
